@@ -10,8 +10,13 @@ app.use((req, res, next) => {
     // res.send('안녕하세요'); - 에러난다
     next();
 }, (req, res, next) => {
-    throw new Error('에러야'); // 에러를 발생시키는 일반 미들웨어
+    try {
+      console.log(dsafasdf);
+    } catch (error) {
+        next(error); // next(인수) 인수가 들어갈 경우에는 다음 미들웨어가 아닌 인수의 에러처리 미들로 감
+    }
 })
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -38,7 +43,7 @@ app.use((req, res, next) => { // 일반 미들웨어 - 라우터가 다 무시�
 
 app.use((err, req, res, next) => { // 에러 처리 전용 미들웨어 'throw new Error(...)' or 'next(err)' 발생하면
     console.error(err);
-    res.status(200).send('에러났어용') 
+    res.status(200).send('에러났으니 확인해주세요') 
 })
 app.listen(app.get('port'), () => {
     console.log('익스프레스 서버 실행');
