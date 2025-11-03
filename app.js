@@ -1,32 +1,23 @@
 const express = require('express');
 const path = require('path');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 app.set('port', process.env.PORT || 3000);
 
-app.use((req, res, next) => {
-    console.log('모든 요청에 실행하고 싶어요');
-    // res.send('안녕하세요'); - 에러난다
-    next();
-}, (req, res, next) => {
-    try {
-      console.log(dsafasdf);
-    } catch (error) {
-        next(error); // next(인수) 인수가 들어갈 경우에는 다음 미들웨어가 아닌 인수의 에러처리 미들로 감
-    }
-})
+app.use(morgan('dev'));
+app.use(cookieParser('zerochopassword'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
+app.get('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post('/', (req, res) => {
     res.send('hello express!');
-});
-
-app.get('/category/:name', (req, res) => {
-    res.send(`hello wildcard`);
 });
 
 app.get('/category/Javascript', (req, res) => {
@@ -38,7 +29,7 @@ app.get('/about', (req, res) => {
 });
 
 app.use((req, res, next) => { // 일반 미들웨어 - 라우터가 다 무시되고 여기까지 오면 404
-    res.status(200).send('404지롱');
+    res.status(404).send('404지롱');
 });
 
 app.use((err, req, res, next) => { // 에러 처리 전용 미들웨어 'throw new Error(...)' or 'next(err)' 발생하면
